@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8">
+		<meta name="Keywords" content="关键词">
+		<meta name="Description" content="描述">
+		<title>Document</title>
+	</head>
+	<body>
+		编号：<input type="text" id="tid">
+		<button onclick="del()">删除</button>
+		<script>
+			function del(){
+				var xhr=new XMLHttpRequest();
+				xhr.onreadystatechange=function(){
+					if (xhr.readyState==4 && xhr.status==200)
+					{
+						var result=xhr.responseText;
+						if (result=="1")
+						{
+							alert("删除成功");
+						}else{
+							alert("删除失败");
+						}
+					}
+				};
+				var $tid=tid.value;
+				xhr.open("delete","/api/v1/deluser/"+$tid,true);
+				xhr.send(null);
+			}
+		</script>
+	</body>
+</html>

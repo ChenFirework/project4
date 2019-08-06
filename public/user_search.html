@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title></title>
+</head>
+<body onload="getUser()">
+<input type="text" id="tname"/><br/>
+<input type="text" id="tpwd"/><br/>
+<input type="text" id="email"/><br/>
+<input type="text" id="phone"/><br/>
+<input type="radio" id="man" name="gender"/>男
+<input type="radio" id="woman" name="gender"/>女<br/>
+<button onclick="updateUser()">修改</button>
+<div id="d1"></div>
+<script>
+    function getUser(){
+        //获取传递过来的tid，使用BOM操作
+        //1.获取地址栏中的查询字符串
+        var urlparams=new URLSearchParams(location.search);
+        //2.获取查询字符串中的tid
+        var $tid=urlparams.get("tid");
+        //console.log($tid);
+        var xhr=new XMLHttpRequest();
+        xhr.onreadystatechange=function(){
+            if (xhr.readyState==4 && xhr.status==200){
+                var result =xhr.responseText;
+                var arr=JSON.parse(result);
+                tname.value=arr[0].tname;
+                tpwd.value=arr[0].tpwd;
+                email.value=arr[0].email;
+                phone.value=arr[0].phone;
+                if (arr[0].sex==1){
+                    man.checked=true;
+                }else{
+                    woman.checked=true;
+                }
+            }
+        }
+        xhr.open("get","/api/v1/searchuser/"+$tid,true);
+        xhr.send(null);
+    }
+
+    function updateUser(){
+        //获取传递过来的tid，使用BOM操作
+        //1.获取地址栏中的查询字符串
+        var urlparams=new URLSearchParams(location.search);
+        //2.获取查询字符串中的tid
+        var $tid=urlparams.get("tid");
+        //console.log($tid);
+        var xhr=new XMLHttpRequest();
+        xhr.onreadystatechange= function () {
+            if(xhr.readyState==4&&xhr.status==200){
+                var result=xhr.responseText;
+                if(result==1){
+                    alert("修改成功");
+                    location.href="http://127.0.0.1:8080/user_list.html";
+                }else{
+                    alert(result);return;
+                }
+            }
+        };
+        if (man.checked){
+            var sex=1;
+        }
+        if (woman.checked){
+            var sex=0;
+        }
+        xhr.open("put","/api/v1/updateuser",true);
+        var formdata="tid="+$tid+"&tname="+tname.value+"&tpwd="+tpwd.value+"&email="+email.value+"&phone="+phone.value+"&sex="+sex;
+        xhr.setRequestHeader("Content-Type","application/x-www-form-urlencoded");
+        xhr.send(formdata);
+    }
+</script>
+</body>
+</html>

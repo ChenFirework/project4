@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8">
+		<meta name="Keywords" content="关键词">
+		<meta name="Description" content="描述">
+		<title>登录</title>
+	</head>
+	<body>
+		用户名：<input type="text" id="tname" onfocus="tname_focus()" onblur="tname_blur()" placeholder="请输入用户名">
+		<span id="sp1"></span>
+		<br>
+
+		密码：<input type="password" id="tpwd" onfocus="tpwd_focus()" onblur="tpwd_blur()" placeholder="请输入密码">
+		<span id="sp2"></span>
+		<br>
+		<button onclick="login()">登录</button>
+		<script>
+		  function tname_focus(){
+				sp1.innerHTML="用户名不超过16位";
+			}
+			function tname_blur(){
+				var $tname=tname.value;
+				if ($tname.length>16)
+				{
+					sp1.innerHTML=("用户名输入不符合规格");
+				}
+			}
+			function tpwd_focus(){
+				sp2.innerHTML="密码长度6~21位";
+			}
+			function tpwd_blur(){
+				var $tpwd=tpwd.value;
+				if ($tpwd.length>21 || $tpwd.length<6)
+				{
+					sp2.innerHTML=("密码输入不符合规格");
+				}
+			}
+			function login(){
+				var $tname=tname.value;
+				var $tpwd=tpwd.value;
+				if ($tname=="")
+				{
+					sp1.innerHTML="用户名不能为空";
+					return;
+				}
+				if ($tpwd=="")
+				{
+					sp2.innerHTML="密码不能为空";
+					return;
+				}
+				var xhr=new XMLHttpRequest();
+				xhr.onreadystatechange=function(){
+					if (xhr.readyState==4 && xhr.status==200)
+					{
+						var result=xhr.responseText;
+						if (result=="1")
+						{
+							alert("登录成功");
+						}else if(result=="0")
+						{
+							alert("用户名或密码错误");
+						}
+					}
+				};
+				xhr.open("get","/api/v1/login/"+$tname+"&"+$tpwd,true);
+				xhr.send(null);
+			}
+		</script>
+	</body>
+</html>

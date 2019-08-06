@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title></title>
+</head>
+<body onload="getUsers()">
+<div id="d1"></div>
+
+
+
+<script>
+    function getUsers(){
+        var xhr=new XMLHttpRequest();
+        xhr.onreadystatechange=function(){
+            if (xhr.readyState==4 && xhr.status==200){
+                var result=xhr.responseText;
+                var arr=JSON.parse(result);
+                var userHTML=`
+                <table border="1px">
+                    <tr>
+                        <th>用户名</th>
+                        <th>密码</th>
+                        <th>邮箱</th>
+                        <th>手机</th>
+                        <th>性别</th>
+                        <th>操作</th>
+                    </tr>
+                `;
+                for (var i=0;i<arr.length;i++){
+                    userHTML+=`
+                        <tr>
+                            <td>${arr[i].tname}</td>
+                            <td>${arr[i].tpwd}</td>
+                            <td>${arr[i].email}</td>
+                            <td>${arr[i].phone}</td>
+                            <td>${arr[i].sex}</td>
+                            <td>
+                                <a href="javascript:deluser(${arr[i].tid})">删除</a>
+                                <a href="user_search.html?tid=${arr[i].tid}">修改</a>
+                            </td>
+                        </tr>
+                    `;
+                }
+                userHTML+=`</table>`;
+               d1.innerHTML=userHTML;
+            }
+        };
+        xhr.open("get","/api/v1/userlist",true);
+        xhr.send(null);
+    }
+    function deluser($tid){
+        var xhr=new XMLHttpRequest();
+        xhr.onreadystatechange=function(){
+            if(xhr.readyState==4 && xhr.status==200){
+                var result=xhr.responseText;
+                if (result=="1"){
+                    alert("删除成功");
+                    getUsers();
+                }
+            }
+        };
+        xhr.open("delete","/api/v1/deluser/"+$tid,true);
+        xhr.send(null);
+    function getuser(){
+        var xhr=new XMLHttpRequest();
+        xhr.onreadystatechange=function(){
+            if (xhr.readyState==4 && xhr.status==200){
+                var result =xhr.responseText;
+                var arr=JSON.parse(result);
+
+            }
+        }
+    }
+    }
+</script>
+
+
+
+
+</body>
+</html>

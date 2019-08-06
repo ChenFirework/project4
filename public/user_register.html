@@ -1,0 +1,101 @@
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8">
+		<meta name="Keywords" content="关键词">
+		<meta name="Description" content="描述">
+		<title>Document</title>
+	</head>
+	<body>
+		用户名：<input type="text" id="tname" onblur="checkTname()">
+		<span id="msg0"></span><br>
+		密码：<input type="text" id="tpwd"><br>
+		重复密码：<input type="text" id="cpwd" onblur="checkCpwd()">
+		<span id="msg1"></span><br>
+		邮箱：<input type="text" id="email"><br>
+		手机：<input type="text" id="phone"><br>
+		性别：<input type="radio" id="man" name="gender" checked>男
+		<input type="radio" id="woman" name="gender">女<br>
+		<button onclick="registerUser()">注册</button>
+		<script>
+			var isReg=false;
+			function checkCpwd(){
+				if (cpwd.value===tpwd.value){
+					isReg=true;
+				}else{
+					isReg=false;
+					msg1.innerHTML="两次密码输入不一致";
+				}
+			}
+			function checkTname(){
+				var $tname=tname.value;
+				if (!$tname){
+					isReg=false;
+					msg0.innerHTML="用户名不能为空";
+					return;
+				}
+				var xhr=new XMLHttpRequest();
+				xhr.onreadystatechange=function (){
+					if(xhr.readyState==4&&xhr.status==200){
+						var result=xhr.responseText;
+						if(result=="1"){
+							isReg=false;
+							alert("用户名已经注册");
+						}else if(result=="0"){
+							isReg=true;
+							alert("用户名可用");
+						}
+					}
+				};
+				xhr.open("get","/api/v1/checktname?tname="+$tname,true);
+				xhr.send();
+			}
+			function registerUser(){
+				var $tname=tname.value;
+				var $tpwd=tpwd.value;
+				var $cpwd=cpwd.value;
+				var $email=email.value;
+				var $phone=phone.value;
+				var $sex=1;
+				if (man.checked){
+					$sex=1;
+				}
+				if (woman.checked){
+					$sex=0;
+				}
+				if (!$tname){
+					isReg=false;
+				}
+				if (!$tpwd){
+					isReg=false;
+				}
+				if (!$cpwd){
+					isReg=false;
+				}
+				if (!$email){
+					isReg=false;
+				}
+				if (!$phone){
+					isReg=false;
+				}
+				var xhr=new XMLHttpRequest();
+				xhr.onreadystatechange=function(){
+					if (xhr.readyState==4 && xhr.status==200)
+					{
+						var result=xhr.responseText;
+						if (result=="1")
+						{
+							alert("注册成功");
+						}else{
+							alert("注册失败");
+						}
+					}
+				};
+				xhr.open("post","/api/v1/register",true);
+				var formdata="tname="+$tname+"&tpwd="+$tpwd+"&email="+$email+"&phone="+$phone+"&sex="+$sex;
+				xhr.setRequestHeader("Content-Type","application/x-www-form-urlencoded");
+				xhr.send(formdata);
+			}
+		</script>
+	</body>
+</html>
